@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { TOTAL_PAGES } from "@/lib/journey";
-import { initSmoothScroll } from "@/lib/scroll";
+import { initSmoothScroll, useKeyboardScroll } from "@/lib/scroll";
 import Loader from "@/components/dom/Loader";
 import Navbar from "@/components/dom/Navbar";
 import HeroOverlay from "@/components/dom/HeroOverlay";
@@ -20,6 +20,7 @@ const Experience = dynamic(() => import("@/components/canvas/Experience"), {
 
 export default function Home() {
   const [fontsReady, setFontsReady] = useState(false);
+  useKeyboardScroll();
 
   useEffect(() => {
     const cleanup = initSmoothScroll();

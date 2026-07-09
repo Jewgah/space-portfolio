@@ -123,6 +123,43 @@ export function useCurrentSection(): SectionId {
 }
 
 /**
+ * Keyboard flight controls. Flight metaphor (WASD-style), NOT native scroll:
+ *   forward / "continue" → ArrowUp · W · ArrowRight
+ *   back                 → ArrowDown · S · ArrowLeft
+ * So Up/W advances the journey (scrolls the page down) — the opposite of the
+ * browser default, matching how W means "forward" in a cockpit. Wheel, touch,
+ * and the scrollbar keep their normal direction.
+ */
+export function useKeyboardScroll() {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      if (
+        el &&
+        (el.tagName === "INPUT" ||
+          el.tagName === "TEXTAREA" ||
+          el.isContentEditable)
+      )
+        return;
+
+      const k = e.key.toLowerCase();
+      const forward = k === "arrowup" || k === "arrowright" || k === "w";
+      const back = k === "arrowdown" || k === "arrowleft" || k === "s";
+      if (!forward && !back) return;
+
+      e.preventDefault();
+      const step = window.innerHeight * 0.9;
+      const targetY = window.scrollY + (forward ? step : -step);
+      if (lenis) lenis.scrollTo(targetY, { duration: 1.1 });
+      else window.scrollTo({ top: targetY, behavior: "smooth" });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+}
+
+/**
  * Subscribe a callback to scroll progress on rAF — for DOM elements that
  * animate with scroll without re-rendering (write styles imperatively).
  */

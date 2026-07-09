@@ -55,17 +55,28 @@ export default function ProjectModal() {
           >
             {/* banner */}
             <div
-              className="relative h-40"
+              className="relative h-44"
               style={{
                 background: `linear-gradient(120deg, ${project.colorA}, ${project.colorB})`,
               }}
             >
-              {/* subtle depth on the gradient + readability for the title */}
+              {/* Real project screenshot (like /verse). Falls back to the
+                  gradient banner if the image is ever missing. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/projects/${project.id}.jpg`}
+                alt={`${project.title} screenshot`}
+                className="absolute inset-0 h-full w-full object-cover object-top"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                }}
+              />
+              {/* darken toward the bottom so the title stays legible on the photo */}
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(120% 140% at 85% -20%, rgba(255,255,255,0.35), transparent 55%), linear-gradient(to top, rgba(2,1,10,0.55), transparent 60%)",
+                    "linear-gradient(to top, rgba(2,1,10,0.88), rgba(2,1,10,0.2) 55%, transparent 82%)",
                 }}
               />
               <span className="absolute left-8 top-5 font-mono text-[10px] tracking-[0.3em] text-white/70">
