@@ -177,6 +177,19 @@ export const PROJECTS: Project[] = [
     linkLabel: "Visit Finterest",
   },
   {
+    id: "infinify",
+    title: "Infinify.ai",
+    meta: "2024 · Co-Founder · AI",
+    tagline: "Strategy to production in 6 weeks",
+    description:
+      "AI consulting studio that takes clients from strategy to production in six weeks — predictive analytics, workflow automation, and conversational AI assistants shipped end to end.",
+    tags: ["Next.js", "Node.js", "OpenAI API", "Firebase"],
+    colorA: "#14b8a6",
+    colorB: "#6366f1",
+    link: "https://infinify.ai",
+    linkLabel: "Visit Infinify",
+  },
+  {
     id: "shippost",
     title: "shippost",
     meta: "2026 · Open source · AI",
@@ -190,30 +203,17 @@ export const PROJECTS: Project[] = [
     linkLabel: "View on GitHub",
   },
   {
-    id: "yad2-watcher",
-    title: "yad2-watcher",
+    id: "claude-code-skills",
+    title: "claude-code-skills",
     meta: "2026 · Open source · AI",
-    tagline: "Saved search → AI-scored Telegram alerts",
+    tagline: "Multi-agent dev workflows for shipping safely",
     description:
-      "Self-hosted tool that turns a saved yad2 search into AI-scored Telegram deal alerts — cars + rentals, per-vertical LLM scoring, a one-command scheduler, Python standard library only.",
-    tags: ["Python", "Claude", "Telegram Bot", "Firebase"],
-    colorA: "#22c55e",
-    colorB: "#14b8a6",
-    link: "https://github.com/Jewgah/yad2-watcher",
+      "Battle-tested Claude Code skills: a multi-agent code review that fans out specialized reviewers and adversarially verifies findings, a pre-implementation plan reviewer, and a stack-aware agent-team scaffolder.",
+    tags: ["Claude Code", "Multi-agent systems", "Prompt engineering", "Bash"],
+    colorA: "#d97757",
+    colorB: "#7c3aed",
+    link: "https://github.com/Jewgah/claude-code-skills",
     linkLabel: "View on GitHub",
-  },
-  {
-    id: "cardshouker",
-    title: "CardShouker",
-    meta: "2023 · UI/UX Lead",
-    tagline: "Trading-card marketplace, MENA",
-    description:
-      "Marketplace for trading card games across the MENA region with real-time market pricing and escrow-protected transactions; led the complete UI/UX redesign.",
-    tags: ["React", "Next.js", "TypeScript", "MongoDB", "Stripe"],
-    colorA: "#f43f5e",
-    colorB: "#a855f7",
-    link: "https://cardshouker.com",
-    linkLabel: "Visit CardShouker",
   },
 ];
 
