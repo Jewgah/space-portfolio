@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SKILLS, PROJECTS } from "./data";
 
 /**
  * The journey map — single source of truth for the scroll-driven flight.
@@ -20,6 +21,32 @@ export const SECTIONS = [
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]["id"];
+
+/**
+ * Discrete stops for keyboard "step" navigation. One waypoint per content beat
+ * — every skill card and every project card gets its own stop — so a key press
+ * advances to the next beat instead of overshooting a whole dense section.
+ */
+function rangeOf(id: SectionId): readonly [number, number] {
+  const s = SECTIONS.find((x) => x.id === id);
+  return s ? s.range : [0, 1];
+}
+export const WAYPOINTS: number[] = (() => {
+  const stops: number[] = [0, 0.145]; // home, launch
+  const [aA, aB] = rangeOf("about");
+  stops.push(aA + (aB - aA) * 0.5);
+  const [eA, eB] = rangeOf("experience");
+  stops.push(eA + (eB - eA) * 0.5);
+  const [sA, sB] = rangeOf("skills");
+  for (let i = 0; i < SKILLS.length; i++)
+    stops.push(sA + ((i + 0.5) / SKILLS.length) * (sB - sA));
+  const [pA, pB] = rangeOf("projects");
+  for (let i = 0; i < PROJECTS.length; i++)
+    stops.push(pA + ((i + 0.5) / PROJECTS.length) * (pB - pA));
+  stops.push(0.85, 1); // contact panel, sun-impact finale
+  const uniq = [...new Set(stops.map((s) => Math.round(s * 1000) / 1000))];
+  return uniq.sort((a, b) => a - b);
+})();
 
 /** Landmark positions — everything in the scene anchors to these. */
 export const ABOUT_PLANET = {

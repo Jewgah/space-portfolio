@@ -6,6 +6,7 @@ import {
   impactProgress,
   sectionAnchor,
   sectionAt,
+  WAYPOINTS,
   type SectionId,
 } from "./journey";
 
@@ -149,9 +150,22 @@ export function useKeyboardScroll() {
       if (!forward && !back) return;
 
       e.preventDefault();
-      const step = window.innerHeight * 0.9;
-      const targetY = window.scrollY + (forward ? step : -step);
-      if (lenis) lenis.scrollTo(targetY, { duration: 1.1 });
+      // Snap to the next/previous content waypoint so a press never skips a
+      // skill or project card (a fixed viewport-sized step overshoots them).
+      const cur = scrollState.progress;
+      const eps = 0.004;
+      let target: number | undefined;
+      if (forward) target = WAYPOINTS.find((p) => p > cur + eps);
+      else
+        for (let i = WAYPOINTS.length - 1; i >= 0; i--)
+          if (WAYPOINTS[i] < cur - eps) {
+            target = WAYPOINTS[i];
+            break;
+          }
+      if (target == null) target = forward ? 1 : 0;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const targetY = target * max;
+      if (lenis) lenis.scrollTo(targetY, { duration: 0.9 });
       else window.scrollTo({ top: targetY, behavior: "smooth" });
     };
     window.addEventListener("keydown", onKey);
