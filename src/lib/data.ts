@@ -100,10 +100,10 @@ export type Skill = {
 export const SKILLS: Skill[] = [
   { num: "01", name: "Frontend", items: "React · Next.js · React Native · Tailwind" },
   { num: "02", name: "Backend", items: "Node.js · Express · REST APIs · Serverless" },
-  { num: "03", name: "AI & Automation", items: "LLMs (OpenAI, Claude) · AI Agents · Semantic Search" },
+  { num: "03", name: "AI & Automation", items: "LLMs (OpenAI, Claude) · AI Agents · Prompt Engineering" },
   { num: "04", name: "Cloud & Infra", items: "Firebase · GCP · AWS · Docker · CI/CD" },
-  { num: "05", name: "Languages", items: "TypeScript · JavaScript · SQL · PHP" },
-  { num: "06", name: "Data", items: "MongoDB · PostgreSQL · Firestore · Redis" },
+  { num: "05", name: "Payments & Data", items: "Stripe · PCI DSS · MongoDB · PostgreSQL" },
+  { num: "06", name: "Languages", items: "TypeScript · JavaScript · Python · SQL · PHP" },
 ];
 
 export type Project = {
