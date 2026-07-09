@@ -11,6 +11,7 @@ import SectionOverlays from "@/components/dom/SectionOverlays";
 import ProjectModal from "@/components/dom/ProjectModal";
 import HUDRail from "@/components/dom/HUDRail";
 import SocialRail from "@/components/dom/SocialRail";
+import SectionDots from "@/components/dom/SectionDots";
 import ImpactFlash from "@/components/dom/ImpactFlash";
 import CustomCursor from "@/components/dom/CustomCursor";
 
@@ -46,6 +47,7 @@ export default function Home() {
       <SectionOverlays />
       <HUDRail />
       <SocialRail />
+      <SectionDots />
       <ProjectModal />
       <ImpactFlash />
       <CustomCursor />
