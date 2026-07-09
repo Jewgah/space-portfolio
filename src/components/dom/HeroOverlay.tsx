@@ -70,18 +70,18 @@ export default function HeroOverlay() {
         {/* Identity — centered band between the nav and the planets */}
         <div className="absolute inset-x-8 top-[10%] flex flex-col items-center gap-6 text-center">
           {/* Status chip flanked by HUD lines */}
-          <motion.div variants={item} className="flex items-center gap-4">
-            <span aria-hidden className="hud-line w-14 sm:w-28" />
-            <span className="glass flex items-center gap-2.5 rounded-full px-5 py-2">
+          <motion.div variants={item} className="flex max-w-full items-center gap-4">
+            <span aria-hidden className="hud-line hidden sm:block sm:w-28" />
+            <span className="glass flex items-center gap-2.5 rounded-2xl px-4 py-2 sm:rounded-full sm:px-5">
               <span
                 aria-hidden
-                className="h-1.5 w-1.5 animate-blink rounded-full bg-cyan shadow-[0_0_10px_rgba(76,201,240,0.9)]"
+                className="h-1.5 w-1.5 shrink-0 animate-blink rounded-full bg-cyan shadow-[0_0_10px_rgba(76,201,240,0.9)]"
               />
-              <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.28em] text-hud lg:text-[11px]">
+              <span className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-hud sm:whitespace-nowrap sm:tracking-[0.28em] lg:text-[11px]">
                 {PROFILE.status}
               </span>
             </span>
-            <span aria-hidden className="hud-line w-14 sm:w-28" />
+            <span aria-hidden className="hud-line hidden sm:block sm:w-28" />
           </motion.div>
 
           {/* Name — gradient fill over a soft glow layer */}
