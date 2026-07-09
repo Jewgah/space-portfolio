@@ -27,6 +27,13 @@ export const scrollState = {
    * reverses if you scroll back up. Every finale effect reads THIS.
    */
   impact: 0,
+  /**
+   * Look-around offset (-1..1), added to mouse parallax in the CameraRig.
+   * Desktop leaves it 0 (mouse drives parallax); the mobile right-hand
+   * control writes it so you can glance around without a mouse.
+   */
+  lookX: 0,
+  lookY: 0,
 };
 
 /** Easing rate for the slow-mo blast — ~0.7 ⇒ ≈4s to fully play out. */
@@ -41,8 +48,31 @@ const IMPACT_REVERSE_LAMBDA = 9;
 
 let lenis: Lenis | null = null;
 
+/**
+ * A scroll-height reference that ignores the mobile URL-bar show/hide. That
+ * bar changes only window.innerHeight; if progress is divided by
+ * (scrollHeight - innerHeight) it jumps every time the bar toggles, which made
+ * the whole scene flicker dark/light on phones. We snapshot the height and
+ * only refresh it on a real resize (width/orientation change).
+ */
+let stableH = 0;
+function scrollMax(): number {
+  const h = stableH || window.innerHeight;
+  return Math.max(1, document.documentElement.scrollHeight - h);
+}
+
 export function initSmoothScroll(): () => void {
   if (lenis) return () => {};
+
+  stableH = window.innerHeight;
+  let lastW = window.innerWidth;
+  const onResize = () => {
+    if (window.innerWidth !== lastW) {
+      lastW = window.innerWidth;
+      stableH = window.innerHeight;
+    }
+  };
+  window.addEventListener("resize", onResize);
 
   lenis = new Lenis({
     duration: 1.35,
@@ -58,8 +88,7 @@ export function initSmoothScroll(): () => void {
 
   const loop = (time: number) => {
     lenis?.raf(time);
-    const doc = document.documentElement;
-    const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+    const max = scrollMax();
     const p = Math.min(1, Math.max(0, window.scrollY / max));
     const now = performance.now();
     const dt = Math.max(1, now - lastT) / 1000;
@@ -87,20 +116,40 @@ export function initSmoothScroll(): () => void {
 
   return () => {
     cancelAnimationFrame(raf);
+    window.removeEventListener("resize", onResize);
     lenis?.destroy();
     lenis = null;
   };
 }
 
 export function scrollToSection(id: SectionId) {
-  const doc = document.documentElement;
-  const max = Math.max(1, doc.scrollHeight - window.innerHeight);
-  const y = sectionAnchor(id) * max;
+  const y = sectionAnchor(id) * scrollMax();
   if (lenis) {
     lenis.scrollTo(y, { duration: 2.2 });
   } else {
     window.scrollTo({ top: y, behavior: "smooth" });
   }
+}
+
+/**
+ * Step to the next/previous content waypoint — shared by the keyboard flight
+ * controls and the mobile on-screen controls so both never skip a beat.
+ */
+export function stepScroll(forward: boolean) {
+  const cur = scrollState.progress;
+  const eps = 0.004;
+  let target: number | undefined;
+  if (forward) target = WAYPOINTS.find((p) => p > cur + eps);
+  else
+    for (let i = WAYPOINTS.length - 1; i >= 0; i--)
+      if (WAYPOINTS[i] < cur - eps) {
+        target = WAYPOINTS[i];
+        break;
+      }
+  if (target == null) target = forward ? 1 : 0;
+  const y = target * scrollMax();
+  if (lenis) lenis.scrollTo(y, { duration: 0.9 });
+  else window.scrollTo({ top: y, behavior: "smooth" });
 }
 
 /** Reactive current-section id (updates only on section change). */
@@ -150,23 +199,7 @@ export function useKeyboardScroll() {
       if (!forward && !back) return;
 
       e.preventDefault();
-      // Snap to the next/previous content waypoint so a press never skips a
-      // skill or project card (a fixed viewport-sized step overshoots them).
-      const cur = scrollState.progress;
-      const eps = 0.004;
-      let target: number | undefined;
-      if (forward) target = WAYPOINTS.find((p) => p > cur + eps);
-      else
-        for (let i = WAYPOINTS.length - 1; i >= 0; i--)
-          if (WAYPOINTS[i] < cur - eps) {
-            target = WAYPOINTS[i];
-            break;
-          }
-      if (target == null) target = forward ? 1 : 0;
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const targetY = target * max;
-      if (lenis) lenis.scrollTo(targetY, { duration: 0.9 });
-      else window.scrollTo({ top: targetY, behavior: "smooth" });
+      stepScroll(forward);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

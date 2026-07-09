@@ -35,9 +35,11 @@ export default function CameraRig() {
 
     const fov = sampleCamera(p, pos.current, tgt.current);
 
-    // Mouse parallax (stronger in the hero, gentler in flight)
-    const px = state.pointer.x;
-    const py = state.pointer.y;
+    // Mouse parallax (stronger in the hero, gentler in flight). On mobile the
+    // right-hand look control feeds scrollState.look so you can glance around
+    // without a mouse; on desktop those stay 0 and the mouse drives it.
+    const px = state.pointer.x + scrollState.lookX;
+    const py = state.pointer.y + scrollState.lookY;
     mouse.current.x = THREE.MathUtils.damp(mouse.current.x, px, 4, dt);
     mouse.current.y = THREE.MathUtils.damp(mouse.current.y, py, 4, dt);
     const heroness = 1 - THREE.MathUtils.smoothstep(p, 0.05, 0.2);

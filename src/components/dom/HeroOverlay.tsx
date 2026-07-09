@@ -144,10 +144,11 @@ export default function HeroOverlay() {
           <TelemetrySquare />
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator (desktop only — mobile navigates with the on-screen
+            controls, so the mouse-scroll metaphor is hidden there) */}
         <motion.div
           variants={item}
-          className="absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-6"
+          className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 items-center gap-6 sm:flex"
         >
           <span className="hud-line hidden w-40 sm:block" />
           <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-hud text-hud/80">

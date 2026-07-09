@@ -12,6 +12,7 @@ import ProjectModal from "@/components/dom/ProjectModal";
 import HUDRail from "@/components/dom/HUDRail";
 import SocialRail from "@/components/dom/SocialRail";
 import SectionDots from "@/components/dom/SectionDots";
+import MobileControls from "@/components/dom/MobileControls";
 import ImpactFlash from "@/components/dom/ImpactFlash";
 import CustomCursor from "@/components/dom/CustomCursor";
 
@@ -48,6 +49,7 @@ export default function Home() {
       <HUDRail />
       <SocialRail />
       <SectionDots />
+      <MobileControls />
       <ProjectModal />
       <ImpactFlash />
       <CustomCursor />
