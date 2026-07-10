@@ -28,12 +28,12 @@ export const scrollState = {
    */
   impact: 0,
   /**
-   * Look-around offset (-1..1), added to mouse parallax in the CameraRig.
-   * Desktop leaves it 0 (mouse drives parallax); the mobile right-hand
-   * control writes it so you can glance around without a mouse.
+   * Free-look offsets (radians), applied by the CameraRig after its lookAt —
+   * FPS-style. The mobile drag writes the targets; the rig damps toward them.
+   * Desktop leaves them 0 (mouse parallax covers it).
    */
-  lookX: 0,
-  lookY: 0,
+  lookYaw: 0,
+  lookPitch: 0,
 };
 
 /** Easing rate for the slow-mo blast — ~0.7 ⇒ ≈4s to fully play out. */

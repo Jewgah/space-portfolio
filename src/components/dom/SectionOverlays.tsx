@@ -122,7 +122,7 @@ export default function SectionOverlays() {
   return (
     <div className="pointer-events-none fixed inset-0 z-10">
       {/* ============ 01 // ABOUT ============ */}
-      <div className="absolute inset-y-0 left-0 flex items-center">
+      <div className="absolute inset-y-0 left-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={aboutRef}
           style={{
@@ -133,7 +133,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll ml-4 max-h-[72svh] w-[470px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:ml-16"
+          className="hud-corners panel-scroll pointer-events-auto ml-4 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[470px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:ml-16"
         >
           <Kicker>01 // About</Kicker>
           <h2 className="mt-3 font-display text-[28px] font-bold leading-[1.08] text-star sm:text-[40px] sm:leading-[1.05]">
@@ -163,7 +163,7 @@ export default function SectionOverlays() {
       </div>
 
       {/* ============ 02 // EXPERIENCE ============ */}
-      <div className="absolute inset-y-0 right-0 flex items-center">
+      <div className="absolute inset-y-0 right-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={experienceRef}
           style={{
@@ -174,7 +174,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[72svh] w-[560px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
+          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[560px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
           <Kicker>02 // Where I&apos;ve worked</Kicker>
 
@@ -296,7 +296,7 @@ export default function SectionOverlays() {
       </div>
 
       {/* ============ 04 // CONTACT ============ */}
-      <div className="absolute inset-y-0 right-0 flex items-center">
+      <div className="absolute inset-y-0 right-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={contactRef}
           style={{
@@ -307,7 +307,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[72svh] w-[460px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
+          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[460px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
           <Kicker>04 // What&apos;s next</Kicker>
           <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.1] text-star sm:text-[34px] sm:leading-[1.08]">

@@ -18,6 +18,7 @@ export default function CameraRig() {
   const pos = useRef(new THREE.Vector3(0, 0.4, 10));
   const tgt = useRef(new THREE.Vector3(0, 0.7, 0));
   const mouse = useRef({ x: 0, y: 0 });
+  const look = useRef({ yaw: 0, pitch: 0 });
   const shake = useRef(0);
   const size = useThree((s) => s.size);
 
@@ -35,11 +36,9 @@ export default function CameraRig() {
 
     const fov = sampleCamera(p, pos.current, tgt.current);
 
-    // Mouse parallax (stronger in the hero, gentler in flight). On mobile the
-    // right-hand look control feeds scrollState.look so you can glance around
-    // without a mouse; on desktop those stay 0 and the mouse drives it.
-    const px = state.pointer.x + scrollState.lookX;
-    const py = state.pointer.y + scrollState.lookY;
+    // Mouse parallax (stronger in the hero, gentler in flight)
+    const px = state.pointer.x;
+    const py = state.pointer.y;
     mouse.current.x = THREE.MathUtils.damp(mouse.current.x, px, 4, dt);
     mouse.current.y = THREE.MathUtils.damp(mouse.current.y, py, 4, dt);
     const heroness = 1 - THREE.MathUtils.smoothstep(p, 0.05, 0.2);
@@ -69,6 +68,25 @@ export default function CameraRig() {
       cam.position.addScaledVector(_recoil, recoil);
     }
     cam.lookAt(tgt.current);
+
+    // Free-look (mobile drag): FPS-style yaw/pitch applied on top of the
+    // journey's framing, damped for smoothness. Desktop leaves targets at 0.
+    look.current.yaw = THREE.MathUtils.damp(
+      look.current.yaw,
+      scrollState.lookYaw,
+      8,
+      dt
+    );
+    look.current.pitch = THREE.MathUtils.damp(
+      look.current.pitch,
+      scrollState.lookPitch,
+      8,
+      dt
+    );
+    if (Math.abs(look.current.yaw) > 1e-4 || Math.abs(look.current.pitch) > 1e-4) {
+      cam.rotateY(look.current.yaw);
+      cam.rotateX(look.current.pitch);
+    }
 
     const targetFov = fov + shake.current * 4;
     if (Math.abs(cam.fov - targetFov) > 0.01) {
