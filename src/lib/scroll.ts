@@ -49,6 +49,22 @@ const IMPACT_REVERSE_LAMBDA = 9;
 let lenis: Lenis | null = null;
 
 /**
+ * Shared prefers-reduced-motion flag (SSR-safe, tracks OS changes). One
+ * mechanism for the CameraRig, environment, and anything else that animates.
+ */
+let reducedMotion = false;
+if (typeof window !== "undefined" && "matchMedia" in window) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  reducedMotion = mq.matches;
+  mq.addEventListener?.("change", (e) => {
+    reducedMotion = e.matches;
+  });
+}
+export function prefersReducedMotion(): boolean {
+  return reducedMotion;
+}
+
+/**
  * A scroll-height reference that ignores the mobile URL-bar show/hide. That
  * bar changes only window.innerHeight; if progress is divided by
  * (scrollHeight - innerHeight) it jumps every time the bar toggles, which made
@@ -122,7 +138,14 @@ export function initSmoothScroll(): () => void {
   };
 }
 
+/** Ease the free-look back to center — movement recenters the view (game feel). */
+function recenterLook() {
+  scrollState.lookYaw = 0;
+  scrollState.lookPitch = 0;
+}
+
 export function scrollToSection(id: SectionId) {
+  recenterLook();
   const y = sectionAnchor(id) * scrollMax();
   if (lenis) {
     lenis.scrollTo(y, { duration: 2.2 });
@@ -136,6 +159,7 @@ export function scrollToSection(id: SectionId) {
  * controls and the mobile on-screen controls so both never skip a beat.
  */
 export function stepScroll(forward: boolean) {
+  recenterLook();
   const cur = scrollState.progress;
   const eps = 0.004;
   let target: number | undefined;

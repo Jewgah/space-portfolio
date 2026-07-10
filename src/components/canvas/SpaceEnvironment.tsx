@@ -10,7 +10,7 @@ import {
   PROJECTS_RING_TILT,
   SKILLS_CENTER,
 } from "@/lib/journey";
-import { scrollState } from "@/lib/scroll";
+import { prefersReducedMotion, scrollState } from "@/lib/scroll";
 import { makeGlowTexture } from "@/lib/textures";
 
 useTexture.preload("/textures/6k_stars_milky_way.webp");
@@ -513,13 +513,17 @@ export default function SpaceEnvironment() {
 
   });
 
+  // Read once at mount — star/sparkle drift freezes for reduced-motion users.
+  const starSpeed = prefersReducedMotion() ? 0 : 0.4;
+  const sparkleSpeed = prefersReducedMotion() ? 0 : 0.3;
+
   return (
     <group>
       {/* Infinity layer: nebula skybox + far starfields, follow the camera */}
       <group ref={envGroup}>
         <mesh geometry={sky.geo} material={sky.mat} renderOrder={-1} />
-        <Stars radius={170} depth={60} count={4000} factor={3} saturation={0} fade speed={0.4} />
-        <Stars radius={300} depth={60} count={2500} factor={5} saturation={0} fade speed={0.4} />
+        <Stars radius={170} depth={60} count={4000} factor={3} saturation={0} fade speed={starSpeed} />
+        <Stars radius={300} depth={60} count={2500} factor={5} saturation={0} fade speed={starSpeed} />
       </group>
 
       {/* Comet streaks / warp lines / asteroid fields */}
@@ -533,7 +537,7 @@ export default function SpaceEnvironment() {
         scale={[14, 8, 6]}
         position={[0, 0, -2]}
         size={2.5}
-        speed={0.3}
+        speed={sparkleSpeed}
         color="#7df9ff"
       />
       <Sparkles
@@ -541,7 +545,7 @@ export default function SpaceEnvironment() {
         scale={[24, 12, 30]}
         position={[SKILLS_CENTER.x, SKILLS_CENTER.y, SKILLS_CENTER.z]}
         size={3}
-        speed={0.3}
+        speed={sparkleSpeed}
         color="#a78bfa"
       />
     </group>
