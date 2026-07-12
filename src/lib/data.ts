@@ -31,7 +31,7 @@ export const PROFILE = {
   siteUrl: `${SITE_URL}/`,
   socials: {
     github: "https://github.com/Jewgah",
-    linkedin: "https://linkedin.com/in/jordanperez",
+    linkedin: "https://www.linkedin.com/in/jordan-buddy-perez/",
   },
 };
 

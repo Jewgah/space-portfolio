@@ -318,16 +318,17 @@ export default function SectionOverlays() {
             {CONTACT_COPY}
           </p>
 
-          {/* No backend, no forms — straight to the inbox */}
           <a
-            href={`mailto:${PROFILE.email}`}
+            href="https://jordanperez.dev/#contact"
+            target="_blank"
+            rel="noreferrer"
             data-cursor="hover"
             className="mt-7 block w-full rounded-full bg-gradient-to-r from-cyan to-nebula py-3.5 text-center font-display text-lg font-semibold tracking-wide text-space transition hover:brightness-110 active:scale-[0.98]"
           >
-            {PROFILE.email} →
+            Contact me →
           </a>
           <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            Opens your mail app — I reply within 24h
+            Opens my contact page — I reply within 24h
           </p>
 
           <div className="hud-line mt-6" />
