@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ARCHIVE_URL, EXPERIENCE, PROFILE, PROJECTS } from "@/lib/data";
+import { ARCHIVE_URL } from "@/lib/data";
+import { useI18n } from "@/lib/locale";
 import { useScrollRaf } from "@/lib/scroll";
 import { useUIStore } from "@/lib/store";
 
@@ -59,12 +60,10 @@ function Kicker({ children }: { children: ReactNode }) {
   );
 }
 
-const CONTACT_COPY =
-  "I'm currently open to new opportunities — full-time, contract, or just a good chat. Whether you have a project idea, a question, or you just want to say hi, my inbox is the best way to reach me.";
-
 /* ------------------------------------------------------------------ */
 
 export default function SectionOverlays() {
+  const { profile, experience, projects, ui } = useI18n();
   const aboutRef = useRef<HTMLDivElement>(null);
   const experienceRef = useRef<HTMLDivElement>(null);
   const skillsRef = useRef<HTMLDivElement>(null);
@@ -111,12 +110,12 @@ export default function SectionOverlays() {
 
   /* ---------------- experience tabs ---------------- */
   const [activeJob, setActiveJob] = useState(0);
-  const job = EXPERIENCE[activeJob];
+  const job = experience[activeJob];
 
   /* ---------------- projects hover chip ---------------- */
   const hoveredId = useUIStore((s) => s.hoveredProject);
   const hovered = hoveredId
-    ? (PROJECTS.find((pr) => pr.id === hoveredId) ?? null)
+    ? (projects.find((pr) => pr.id === hoveredId) ?? null)
     : null;
 
   return (
@@ -135,22 +134,23 @@ export default function SectionOverlays() {
           }}
           className="hud-corners panel-scroll pointer-events-auto ml-4 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[470px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:ml-16"
         >
-          <Kicker>01 // About</Kicker>
+          <Kicker>{ui.about.kicker}</Kicker>
           <h2 className="mt-3 font-display text-[28px] font-bold leading-[1.08] text-star sm:text-[40px] sm:leading-[1.05]">
-            Full stack, fewer <span className="text-cyan">bottlenecks</span>
+            {ui.about.h[0]}
+            <span className="text-cyan">{ui.about.h[1]}</span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-white/85">
-            {PROFILE.about.lead}
+            {profile.about.lead}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/75">
-            {PROFILE.about.p2}
+            {profile.about.p2}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/75">
-            {PROFILE.about.p3}
+            {profile.about.p3}
           </p>
           <div className="hud-line mt-6" />
           <ul className="mt-5 space-y-2">
-            {PROFILE.about.credentials.map((cred) => (
+            {profile.about.credentials.map((cred) => (
               <li
                 key={cred}
                 className="font-mono text-xs uppercase tracking-wide text-star/85"
@@ -176,10 +176,10 @@ export default function SectionOverlays() {
           }}
           className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[560px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
-          <Kicker>02 // Where I&apos;ve worked</Kicker>
+          <Kicker>{ui.experience.kicker}</Kicker>
 
           <div className="mt-4 flex gap-3">
-            {EXPERIENCE.map((j, i) => (
+            {experience.map((j, i) => (
               <button
                 key={j.company}
                 type="button"
@@ -233,7 +233,7 @@ export default function SectionOverlays() {
       {/* ============ SKILLS ============ */}
       <div className="absolute inset-x-0 top-28 flex justify-center">
         <div ref={skillsRef} style={HIDDEN} className="px-6 text-center">
-          <Kicker>{"// Systems check"}</Kicker>
+          <Kicker>{ui.skills.kicker}</Kicker>
           <h2
             className="mt-2 font-display text-[28px] font-bold text-star"
             style={{
@@ -241,10 +241,10 @@ export default function SectionOverlays() {
                 "0 0 24px rgba(76,201,240,0.45), 0 0 64px rgba(124,58,237,0.35)",
             }}
           >
-            Skill modules online
+            {ui.skills.title}
           </h2>
-          <p className="mt-2 font-mono text-xs tracking-[0.3em] text-white/40">
-            FLY THROUGH THE CALIBRATION CORRIDOR
+          <p className="mt-2 font-mono text-xs uppercase tracking-[0.3em] text-white/40">
+            {ui.skills.hint}
           </p>
         </div>
       </div>
@@ -252,15 +252,15 @@ export default function SectionOverlays() {
       {/* ============ 03 // PROJECTS ============ */}
       <div className="absolute left-8 top-28 lg:left-16">
         <div ref={projectsRef} style={HIDDEN}>
-          <Kicker>03 // Some things I&apos;ve built</Kicker>
+          <Kicker>{ui.projects.kicker}</Kicker>
           <h2
             className="mt-2 font-display text-[34px] font-bold text-star"
             style={{ textShadow: "0 0 28px rgba(124,58,237,0.4)" }}
           >
-            Projects in orbit
+            {ui.projects.title}
           </h2>
-          <p className="mt-3 animate-blink font-mono text-xs tracking-[0.2em] text-hud">
-            ▸ CLICK A CARD TO INSPECT
+          <p className="mt-3 animate-blink font-mono text-xs uppercase tracking-[0.2em] text-hud">
+            {ui.projects.hint}
           </p>
           <a
             href={ARCHIVE_URL}
@@ -269,7 +269,7 @@ export default function SectionOverlays() {
             data-cursor="hover"
             className="pointer-events-auto mt-3 inline-block font-mono text-xs text-star/60 underline-offset-4 transition-colors hover:text-cyan hover:underline"
           >
-            Explore the archive ↗
+            {ui.projects.archive}
           </a>
         </div>
       </div>
@@ -287,8 +287,8 @@ export default function SectionOverlays() {
               className="glass flex items-center gap-2.5 rounded-full px-4 py-2"
             >
               <span className="block h-1.5 w-1.5 rotate-45 animate-blink bg-cyan shadow-[0_0_8px_rgba(76,201,240,0.9)]" />
-              <span className="font-mono text-[10px] tracking-[0.22em] text-hud">
-                TARGET LOCKED // {hovered.title.toUpperCase()}
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-hud">
+                {`${ui.projects.targetLocked} // ${hovered.title.toUpperCase()}`}
               </span>
             </motion.div>
           )}
@@ -309,13 +309,14 @@ export default function SectionOverlays() {
           }}
           className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[460px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
-          <Kicker>04 // What&apos;s next</Kicker>
+          <Kicker>{ui.contact.kicker}</Kicker>
           <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.1] text-star sm:text-[34px] sm:leading-[1.08]">
-            Let&apos;s make something{" "}
-            <span className="text-cyan">together</span>.
+            {ui.contact.h[0]}
+            <span className="text-cyan">{ui.contact.h[1]}</span>
+            {ui.contact.h[2]}
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-white/80">
-            {CONTACT_COPY}
+            {ui.contact.copy}
           </p>
 
           <a
@@ -325,10 +326,10 @@ export default function SectionOverlays() {
             data-cursor="hover"
             className="mt-7 block w-full rounded-full bg-gradient-to-r from-cyan to-nebula py-3.5 text-center font-display text-lg font-semibold tracking-wide text-space transition hover:brightness-110 active:scale-[0.98]"
           >
-            Contact me →
+            {ui.contact.cta}
           </a>
           <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            Opens my contact page — I reply within 24h
+            {ui.contact.note}
           </p>
 
           <div className="hud-line mt-6" />
@@ -336,7 +337,7 @@ export default function SectionOverlays() {
           <div className="mt-5 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <a
-                href={PROFILE.socials.github}
+                href={profile.socials.github}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
@@ -348,7 +349,7 @@ export default function SectionOverlays() {
                 </svg>
               </a>
               <a
-                href={PROFILE.socials.linkedin}
+                href={profile.socials.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
@@ -366,7 +367,7 @@ export default function SectionOverlays() {
           </div>
 
           <p className="mt-5 font-mono text-[10px] tracking-[0.14em] text-white/25">
-            © 2026 {PROFILE.name.toUpperCase()} — BUILT WITH NEXT.JS + R3F
+            © 2026 {profile.name.toUpperCase()} — BUILT WITH NEXT.JS + R3F
           </p>
         </div>
       </div>

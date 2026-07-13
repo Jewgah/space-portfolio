@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/lib/locale";
 import { scrollState, stepScroll } from "@/lib/scroll";
 
 /**
@@ -33,6 +34,7 @@ const BTN =
   "pointer-events-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-hud/30 bg-space/50 text-cyan backdrop-blur-md transition-colors active:border-cyan active:bg-cyan/15";
 
 export default function MobileControls() {
+  const { ui } = useI18n();
   const hold = useRef<number | null>(null);
   const stopStep = () => {
     if (hold.current) {
@@ -101,7 +103,7 @@ export default function MobileControls() {
         <button
           type="button"
           className={BTN}
-          aria-label="Move forward"
+          aria-label={ui.mobile.forward}
           onPointerDown={() => startStep(true)}
           onPointerUp={stopStep}
           onPointerLeave={stopStep}
@@ -110,12 +112,12 @@ export default function MobileControls() {
           <Chevron dir="up" />
         </button>
         <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-white/40">
-          Move · drag to look
+          {ui.mobile.hint}
         </span>
         <button
           type="button"
           className={BTN}
-          aria-label="Move back"
+          aria-label={ui.mobile.back}
           onPointerDown={() => startStep(false)}
           onPointerUp={stopStep}
           onPointerLeave={stopStep}

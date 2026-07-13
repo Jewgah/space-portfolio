@@ -1,14 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import { SECTIONS, sectionAt, type SectionId } from "@/lib/journey";
+import { SECTIONS, sectionAt } from "@/lib/journey";
+import { useI18n } from "@/lib/locale";
 import { scrollToSection, useCurrentSection, useScrollRaf } from "@/lib/scroll";
 
-const LABELS = Object.fromEntries(
-  SECTIONS.map((s) => [s.id, s.label])
-) as Record<SectionId, string>;
-
 export default function HUDRail() {
+  const { ui } = useI18n();
+  const LABELS = ui.sections;
   const current = useCurrentSection();
 
   const fillRef = useRef<HTMLDivElement>(null);
@@ -71,7 +70,7 @@ export default function HUDRail() {
               key={s.id}
               type="button"
               data-cursor="hover"
-              aria-label={`Go to ${s.label}`}
+              aria-label={`${ui.goTo} ${LABELS[s.id]}`}
               onClick={() => scrollToSection(s.id)}
               className="group pointer-events-auto absolute left-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
               style={{ top: `${s.range[0] * 100}%` }}
@@ -84,7 +83,7 @@ export default function HUDRail() {
                 }`}
               />
               <span className="pointer-events-none absolute right-full top-1/2 mr-3 -translate-y-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.25em] text-hud opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                {s.label}
+                {LABELS[s.id]}
               </span>
             </button>
           );

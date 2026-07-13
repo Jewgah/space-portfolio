@@ -6,7 +6,7 @@ import {
   PROJECTS,
   SITE_URL,
 } from "@/lib/data";
-import SeoContent from "@/components/dom/SeoContent";
+import { META } from "@/lib/i18n";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -26,10 +26,8 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500", "700"],
 });
 
-const TITLE =
-  "Jordan Perez — Full Stack Engineer | React, Next.js, TypeScript & AI";
-const DESCRIPTION =
-  "Jordan Perez is a Full Stack Engineer (Israel) with 5+ years building AI products and production systems across fintech and SaaS — 20+ apps shipped from concept to production, from payment infrastructure across 20+ African markets to AI platforms for hospitality, construction, and sales. React, Next.js, TypeScript, Node.js, and LLM integration (OpenAI, Claude).";
+const TITLE = META.en.title;
+const DESCRIPTION = META.en.description;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -234,10 +232,18 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable} antialiased`}
     >
       <body>
+        {/* One root layout serves /, /fr and /he, so <html lang/dir> can't be
+            set per route at build time. This parser-blocking inline script
+            corrects them from the URL before first paint (screen readers and
+            RTL layout see the right values immediately); crawlers get the
+            language via hreflang alternates. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){var p=location.pathname,l=p==="/fr"||p.indexOf("/fr/")===0?"fr":p==="/he"||p.indexOf("/he/")===0?"he":"en",d=document.documentElement;d.lang=l;d.dir=l==="he"?"rtl":"ltr";})()',
+          }}
+        />
         {children}
-        {/* Text alternative to the WebGL experience — full, semantic content
-            for screen readers and for AI/search crawlers that don't run JS. */}
-        <SeoContent />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

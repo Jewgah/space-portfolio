@@ -2,7 +2,7 @@
 
 import { motion, type Variants } from "motion/react";
 import { useRef } from "react";
-import { PROFILE } from "@/lib/data";
+import { useI18n } from "@/lib/locale";
 import { useScrollRaf } from "@/lib/scroll";
 
 function smoothstep(p: number, a: number, b: number): number {
@@ -48,6 +48,7 @@ function TelemetrySquare() {
 }
 
 export default function HeroOverlay() {
+  const { profile, ui } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
 
   useScrollRaf((p) => {
@@ -78,7 +79,7 @@ export default function HeroOverlay() {
                 className="h-1.5 w-1.5 shrink-0 animate-blink rounded-full bg-cyan shadow-[0_0_10px_rgba(76,201,240,0.9)]"
               />
               <span className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-hud sm:whitespace-nowrap sm:tracking-[0.28em] lg:text-[11px]">
-                {PROFILE.status}
+                {profile.status}
               </span>
             </span>
             <span aria-hidden className="hud-line hidden sm:block sm:w-28" />
@@ -93,10 +94,10 @@ export default function HeroOverlay() {
               aria-hidden
               className="absolute inset-0 select-none bg-gradient-to-b from-white to-[#7df9ff] bg-clip-text text-transparent opacity-50 blur-[16px]"
             >
-              {PROFILE.name}
+              {profile.name}
             </span>
             <span className="relative bg-gradient-to-b from-white from-40% via-[#e8f4ff] to-[#8fd8f8] bg-clip-text text-transparent drop-shadow-[0_2px_18px_rgba(76,201,240,0.35)]">
-              {PROFILE.name}
+              {profile.name}
             </span>
           </motion.h1>
 
@@ -152,13 +153,13 @@ export default function HeroOverlay() {
         >
           <span className="hud-line hidden w-40 sm:block" />
           <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-hud text-hud/80">
-            Scroll To
+            {ui.hero.scrollTo}
           </span>
           <span className="flex h-11 w-7 items-start justify-center rounded-full border border-hud/50 pt-2 shadow-[0_0_16px_rgba(76,201,240,0.15)]">
             <span className="h-2 w-1 animate-scroll-dot rounded-full bg-cyan-bright shadow-[0_0_8px_rgba(125,249,255,0.9)]" />
           </span>
           <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-hud text-hud/80">
-            Explore
+            {ui.hero.explore}
           </span>
           <span className="hud-line hidden w-40 sm:block" />
         </motion.div>

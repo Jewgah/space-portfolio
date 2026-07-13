@@ -1,4 +1,4 @@
-import { PROFILE, EXPERIENCE, SKILLS, PROJECTS } from "@/lib/data";
+import { getContent, type Locale } from "@/lib/i18n";
 
 /**
  * A complete, semantic, text-only rendering of the portfolio.
@@ -14,28 +14,39 @@ import { PROFILE, EXPERIENCE, SKILLS, PROJECTS } from "@/lib/data";
  * legitimate text alternative to canvas content, not hidden keyword stuffing —
  * it's the exact same information the animated sections present on scroll.
  */
-export default function SeoContent() {
+export default function SeoContent({ locale = "en" }: { locale?: Locale }) {
+  const { profile, experience, skills, projects, ui } = getContent(locale);
+  const t = ui.seo;
+  const dir = locale === "he" ? "rtl" : "ltr";
+
   return (
-    <section className="sr-only" aria-label={`About ${PROFILE.name}`}>
+    <section
+      className="sr-only"
+      lang={locale}
+      dir={dir}
+      aria-label={`${t.aboutTitle} — ${profile.name}`}
+    >
       <header>
         <h2>
-          {PROFILE.name} — {PROFILE.role}
+          {profile.name} — {profile.role}
         </h2>
-        <p>{PROFILE.status}</p>
-        <p>{PROFILE.bio}</p>
+        <p>{profile.status}</p>
+        <p>{profile.bio}</p>
       </header>
 
-      <section aria-label="About">
-        <h2>About</h2>
-        <p>{PROFILE.about.lead}</p>
-        <p>{PROFILE.about.p2}</p>
-        <p>{PROFILE.about.p3}</p>
-        <p>Based in {PROFILE.location}.</p>
+      <section aria-label={t.aboutTitle}>
+        <h2>{t.aboutTitle}</h2>
+        <p>{profile.about.lead}</p>
+        <p>{profile.about.p2}</p>
+        <p>{profile.about.p3}</p>
+        <p>
+          {t.basedIn} {profile.location}.
+        </p>
       </section>
 
-      <section aria-label="Work experience">
-        <h2>Experience</h2>
-        {EXPERIENCE.map((job) => (
+      <section aria-label={t.experienceTitle}>
+        <h2>{t.experienceTitle}</h2>
+        {experience.map((job) => (
           <article key={job.company}>
             <h3>
               {job.title} — {job.company}
@@ -53,9 +64,9 @@ export default function SeoContent() {
         ))}
       </section>
 
-      <section aria-label="Projects">
-        <h2>Projects</h2>
-        {PROJECTS.map((project) => (
+      <section aria-label={t.projectsTitle}>
+        <h2>{t.projectsTitle}</h2>
+        {projects.map((project) => (
           <article key={project.id}>
             <h3>
               {project.link ? (
@@ -70,15 +81,17 @@ export default function SeoContent() {
               {project.meta} — {project.tagline}
             </p>
             <p>{project.description}</p>
-            <p>Built with: {project.tags.join(", ")}.</p>
+            <p>
+              {t.builtWith} {project.tags.join(", ")}.
+            </p>
           </article>
         ))}
       </section>
 
-      <section aria-label="Skills">
-        <h2>Skills</h2>
+      <section aria-label={t.skillsTitle}>
+        <h2>{t.skillsTitle}</h2>
         <ul>
-          {SKILLS.map((skill) => (
+          {skills.map((skill) => (
             <li key={skill.num}>
               <strong>{skill.name}:</strong> {skill.items}
             </li>
@@ -86,35 +99,36 @@ export default function SeoContent() {
         </ul>
       </section>
 
-      <section aria-label="Education and credentials">
-        <h2>Education &amp; Credentials</h2>
+      <section aria-label={t.educationTitle}>
+        <h2>{t.educationTitle}</h2>
         <ul>
-          {PROFILE.about.credentials.map((credential, i) => (
+          {profile.about.credentials.map((credential, i) => (
             <li key={i}>{credential}</li>
           ))}
         </ul>
       </section>
 
-      <section aria-label="Contact">
-        <h2>Contact</h2>
+      <section aria-label={t.contactTitle}>
+        <h2>{t.contactTitle}</h2>
         <p>
-          Email:{" "}
-          <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+          {t.email} <a href={`mailto:${profile.email}`}>{profile.email}</a>
         </p>
-        <p>Location: {PROFILE.location}</p>
+        <p>
+          {t.location} {profile.location}
+        </p>
         <ul>
           <li>
-            <a href={PROFILE.socials.github} rel="noopener">
+            <a href={profile.socials.github} rel="noopener">
               GitHub
             </a>
           </li>
           <li>
-            <a href={PROFILE.socials.linkedin} rel="noopener">
+            <a href={profile.socials.linkedin} rel="noopener">
               LinkedIn
             </a>
           </li>
           <li>
-            <a href={PROFILE.resume}>Résumé (PDF)</a>
+            <a href={profile.resume}>{t.resumePdf}</a>
           </li>
         </ul>
       </section>

@@ -45,7 +45,11 @@ export function makeTextTexture(
 
   const probe = makeCanvas(8, 8).ctx;
   probe.font = `700 ${size}px ${DISPLAY_FONT}`;
-  const spaced = text.split("").join(" "); // hair-spaces for tracking
+  // Hair-spaces for tracking - skipped for Hebrew, where per-letter gaps
+  // read as broken words rather than a stylized display face.
+  const spaced = /[\u0590-\u05FF]/.test(text)
+    ? text
+    : text.split("").join(" ");
   const w = probe.measureText(spaced).width * (1 + ls) + size * 2;
   const h = size * 2.2;
 
@@ -95,7 +99,10 @@ export function makeGlowTexture(
  * title, tagline, tech tags, and a thin brand-color accent. Matches the
  * skill-module styling so the whole scene reads as one system.
  */
-export function makeProjectCardTexture(project: Project): THREE.CanvasTexture {
+export function makeProjectCardTexture(
+  project: Project,
+  featuredLabel = "★ FEATURED"
+): THREE.CanvasTexture {
   // Drawn in 640x400 logical space at 2x physical resolution so titles
   // stay crisp when the cards are viewed from orbit distance.
   const W = 640;
@@ -147,7 +154,7 @@ export function makeProjectCardTexture(project: Project): THREE.CanvasTexture {
     ctx.textAlign = "right";
     ctx.fillStyle = "#ffd166";
     ctx.font = `600 22px ${MONO_FONT}`;
-    ctx.fillText("★ FEATURED", W - 40, 76);
+    ctx.fillText(featuredLabel, W - 40, 76);
     ctx.textAlign = "left";
   }
 

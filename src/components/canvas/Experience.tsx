@@ -11,6 +11,7 @@ import {
 import type { BloomEffect, ChromaticAberrationEffect } from "postprocessing";
 import { Suspense, useEffect, useRef } from "react";
 import * as THREE from "three";
+import type { Locale } from "@/lib/i18n";
 import { scrollState } from "@/lib/scroll";
 import { useUIStore } from "@/lib/store";
 import CameraRig from "./CameraRig";
@@ -101,12 +102,12 @@ function DeferredPrecompile() {
  * stream in the background, then precompile (env already set) so scrolling
  * to the Work/About/Skills sections never hitches.
  */
-function DeferredScene() {
+function DeferredScene({ locale }: { locale: Locale }) {
   const ready = useUIStore((s) => s.ready);
   if (!ready) return null;
   return (
     <Suspense fallback={null}>
-      <SetDressing />
+      <SetDressing locale={locale} />
       <DeferredPrecompile />
     </Suspense>
   );
@@ -148,7 +149,7 @@ function ImpactPostSurge({
   return null;
 }
 
-export default function Experience() {
+export default function Experience({ locale = "en" }: { locale?: Locale }) {
   const bloomRef = useRef<BloomEffect | null>(null);
   const chromaRef = useRef<ChromaticAberrationEffect | null>(null);
 
@@ -196,9 +197,9 @@ export default function Experience() {
           <CameraRig />
           <SpaceEnvironment />
           <Rocket />
-          <Planets />
-          <SkillCards />
-          <ProjectOrbit />
+          <Planets locale={locale} />
+          <SkillCards locale={locale} />
+          <ProjectOrbit locale={locale} />
           <SunImpact />
 
           <EffectComposer multisampling={4}>
@@ -221,7 +222,7 @@ export default function Experience() {
             GLB models (ISS, astronaut, spaceship — none appear in the hero)
             stream in AFTER first paint, then precompile so scrolling to
             them never hitches. This is what makes the hero appear fast. */}
-        <DeferredScene />
+        <DeferredScene locale={locale} />
       </Canvas>
     </div>
   );

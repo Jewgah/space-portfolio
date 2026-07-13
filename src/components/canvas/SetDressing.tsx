@@ -4,6 +4,7 @@ import { Float, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { getContent, type Locale } from "@/lib/i18n";
 import { STATION, sectionProgress } from "@/lib/journey";
 import { scrollState } from "@/lib/scroll";
 import { makeGlowTexture, makeTextTexture } from "@/lib/textures";
@@ -143,7 +144,7 @@ function ShipFlyby() {
  * (public domain, NASA 3D Resources), recentered and materials tuned
  * for the scene lighting.
  */
-function WorkStation() {
+function WorkStation({ labelText }: { labelText: string }) {
   const groupRef = useRef<THREE.Group>(null);
   const spinRef = useRef<THREE.Group>(null);
   const { scene: issScene } = useGLTF("/models/iss.glb");
@@ -169,7 +170,7 @@ function WorkStation() {
   }, [issScene]);
 
   const label = useMemo(() => {
-    const { texture, aspect } = makeTextTexture("WORK LOG", { size: 120 });
+    const { texture, aspect } = makeTextTexture(labelText, { size: 120 });
     const mat = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
@@ -178,7 +179,7 @@ function WorkStation() {
       blending: THREE.AdditiveBlending,
     });
     return { mat, aspect };
-  }, []);
+  }, [labelText]);
 
   const labelRef = useRef<THREE.Mesh>(null);
 
@@ -219,12 +220,13 @@ function WorkStation() {
   );
 }
 
-export default function SetDressing() {
+export default function SetDressing({ locale = "en" }: { locale?: Locale }) {
+  const { ui } = getContent(locale);
   return (
     <>
       <Astronaut />
       <ShipFlyby />
-      <WorkStation />
+      <WorkStation labelText={ui.scene.workLog} />
     </>
   );
 }

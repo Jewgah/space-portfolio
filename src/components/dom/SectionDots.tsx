@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import type { SectionId } from "@/lib/journey";
+import { useI18n } from "@/lib/locale";
 import { scrollToSection, useCurrentSection } from "@/lib/scroll";
 
 /**
@@ -9,16 +10,18 @@ import { scrollToSection, useCurrentSection } from "@/lib/scroll";
  * section links below `lg`, so on phones this vertical dot rail is how you see
  * where you are in the flight and jump between stops. Hidden on `lg+`.
  */
-const DOTS: { id: SectionId; label: string }[] = [
-  { id: "hero", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "experience", label: "Work" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
-  { id: "contact", label: "Contact" },
+const DOT_IDS: SectionId[] = [
+  "hero",
+  "about",
+  "experience",
+  "skills",
+  "projects",
+  "contact",
 ];
 
 export default function SectionDots() {
+  const { ui } = useI18n();
+  const DOTS = DOT_IDS.map((id) => ({ id, label: ui.sections[id] }));
   const current = useCurrentSection();
   // "launch" is the brief takeoff transition — keep Home lit through it.
   const activeId: SectionId = current === "launch" ? "hero" : current;
@@ -38,7 +41,7 @@ export default function SectionDots() {
             key={d.id}
             type="button"
             onClick={() => scrollToSection(d.id)}
-            aria-label={`Go to ${d.label}`}
+            aria-label={`${ui.goTo} ${d.label}`}
             aria-current={active ? "step" : undefined}
             className="flex h-11 items-center justify-end gap-2 pl-4 pr-1"
           >

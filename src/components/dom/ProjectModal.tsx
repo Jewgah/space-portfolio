@@ -2,15 +2,16 @@
 
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { PROJECTS } from "@/lib/data";
+import { useI18n } from "@/lib/locale";
 import { useUIStore } from "@/lib/store";
 
 export default function ProjectModal() {
+  const { projects, ui } = useI18n();
   const selectedProject = useUIStore((s) => s.selectedProject);
   const setSelectedProject = useUIStore((s) => s.setSelectedProject);
 
   const project = selectedProject
-    ? (PROJECTS.find((p) => p.id === selectedProject) ?? null)
+    ? (projects.find((p) => p.id === selectedProject) ?? null)
     : null;
 
   // ESC closes
@@ -79,8 +80,8 @@ export default function ProjectModal() {
                     "linear-gradient(to top, rgba(2,1,10,0.88), rgba(2,1,10,0.2) 55%, transparent 82%)",
                 }}
               />
-              <span className="absolute left-8 top-5 font-mono text-[10px] tracking-[0.3em] text-white/70">
-                ▸ MISSION BRIEF
+              <span className="absolute left-8 top-5 font-mono text-[10px] uppercase tracking-[0.3em] text-white/70">
+                {ui.modal.brief}
               </span>
               <div className="absolute bottom-4 left-8 right-16">
                 <h3 className="font-display text-4xl font-bold text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
@@ -88,8 +89,8 @@ export default function ProjectModal() {
                 </h3>
                 <div className="mt-2 flex flex-wrap items-center gap-3">
                   {project.featured && (
-                    <span className="rounded-full border border-cyan/40 px-3 py-1 font-mono text-[10px] text-cyan">
-                      ★ FEATURED PROJECT
+                    <span className="rounded-full border border-cyan/40 px-3 py-1 font-mono text-[10px] uppercase text-cyan">
+                      {ui.modal.featured}
                     </span>
                   )}
                   <span className="font-mono text-[10px] uppercase tracking-hud text-white/60">
@@ -100,7 +101,7 @@ export default function ProjectModal() {
               <button
                 type="button"
                 onClick={() => setSelectedProject(null)}
-                aria-label="Close"
+                aria-label={ui.modal.close}
                 data-cursor="hover"
                 className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-white/80 transition-colors hover:border-cyan hover:text-cyan"
               >
@@ -137,7 +138,7 @@ export default function ProjectModal() {
                     data-cursor="hover"
                     className="rounded-full bg-gradient-to-r from-cyan to-nebula px-6 py-2.5 font-display text-sm font-semibold uppercase tracking-wide text-space transition hover:brightness-110 active:scale-[0.98]"
                   >
-                    {project.linkLabel ?? "Visit project"} ▸
+                    {project.linkLabel ?? ui.modal.visit} ▸
                   </a>
                 )}
                 <span className="ml-auto font-mono text-[10px] tracking-[0.24em] text-white/30">

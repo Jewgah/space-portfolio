@@ -12,6 +12,7 @@ import {
 } from "@/lib/journey";
 import { scrollState } from "@/lib/scroll";
 import { PROJECTS, type Project } from "@/lib/data";
+import { getContent, type Locale } from "@/lib/i18n";
 import { useUIStore } from "@/lib/store";
 import {
   makeGlowTexture,
@@ -72,9 +73,10 @@ type CardProps = {
   index: number;
   cardGeo: THREE.PlaneGeometry;
   glowGeo: THREE.PlaneGeometry;
+  featuredLabel: string;
 };
 
-function ProjectCard({ project, index, cardGeo, glowGeo }: CardProps) {
+function ProjectCard({ project, index, cardGeo, glowGeo, featuredLabel }: CardProps) {
   const billboardRef = useRef<THREE.Group>(null);
   const alphaRef = useRef(0);
   const targets = useRef({ scale: 1, glow: GLOW_BASE });
@@ -87,7 +89,7 @@ function ProjectCard({ project, index, cardGeo, glowGeo }: CardProps) {
   const yOff = LANE_Y[lane];
 
   const { cardMat, glowMat } = useMemo(() => {
-    const cardTex = makeProjectCardTexture(project);
+    const cardTex = makeProjectCardTexture(project, featuredLabel);
     const glowTex = makeGlowTexture(hexToRgba(project.colorA, 0.5));
 
     const cardMat = new THREE.MeshBasicMaterial({
@@ -106,7 +108,7 @@ function ProjectCard({ project, index, cardGeo, glowGeo }: CardProps) {
       opacity: 0,
     });
     return { cardMat, glowMat };
-  }, [project]);
+  }, [project, featuredLabel]);
 
   useEffect(() => {
     return () => {
@@ -210,7 +212,8 @@ const SATS = [
 /* Root                                                                */
 /* ------------------------------------------------------------------ */
 
-export default function ProjectOrbit() {
+export default function ProjectOrbit({ locale = "en" }: { locale?: Locale }) {
+  const { projects, ui } = getContent(locale);
   const rootRef = useRef<THREE.Group>(null);
   const carouselRef = useRef<THREE.Group>(null);
   const satRefs = useRef<(THREE.Mesh | null)[]>([null, null]);
@@ -287,13 +290,14 @@ export default function ProjectOrbit() {
       visible={false}
     >
       <group ref={carouselRef}>
-        {PROJECTS.map((project, i) => (
+        {projects.map((project, i) => (
           <ProjectCard
             key={project.id}
             project={project}
             index={i}
             cardGeo={cardGeo}
             glowGeo={glowGeo}
+            featuredLabel={ui.scene.featured}
           />
         ))}
       </group>

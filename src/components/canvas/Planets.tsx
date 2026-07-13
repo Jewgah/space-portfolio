@@ -11,6 +11,7 @@ import {
   PROJECTS_RING_TILT,
   sectionProgress,
 } from "@/lib/journey";
+import { getContent, type Locale } from "@/lib/i18n";
 import { scrollState } from "@/lib/scroll";
 import { makeGlowTexture, makeTextTexture } from "@/lib/textures";
 
@@ -390,7 +391,7 @@ function BillboardLabel({
 /* About planet — rocky, city lights on the night side                 */
 /* ------------------------------------------------------------------ */
 
-function AboutPlanet() {
+function AboutPlanet({ label }: { label: string }) {
   const planetRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
   const beltRef = useRef<THREE.Points>(null);
@@ -492,7 +493,7 @@ function AboutPlanet() {
         </group>
       </group>
       <BillboardLabel
-        text="ABOUT ME"
+        text={label}
         fontSize={200}
         width={11}
         position={ABOUT_LABEL_POS}
@@ -506,7 +507,7 @@ function AboutPlanet() {
 /* Projects planet — gas giant with the signature ring                 */
 /* ------------------------------------------------------------------ */
 
-function ProjectsPlanet() {
+function ProjectsPlanet({ label }: { label: string }) {
   const planetRef = useRef<THREE.Mesh>(null);
 
   const neptuneMap = useTexture("/textures/2k_neptune.webp", prepAlbedo);
@@ -579,7 +580,7 @@ function ProjectsPlanet() {
         </group>
       </group>
       <BillboardLabel
-        text="PROJECTS"
+        text={label}
         fontSize={200}
         width={9}
         position={PROJECTS_LABEL_POS}
@@ -593,7 +594,7 @@ function ProjectsPlanet() {
 /* Contact sun                                                         */
 /* ------------------------------------------------------------------ */
 
-function ContactSun() {
+function ContactSun({ label }: { label: string }) {
   const sunTex = useTexture("/textures/4k_sun.webp", prepAlbedo);
 
   const sunMat = useMemo(
@@ -692,7 +693,7 @@ function ContactSun() {
       </group>
       <primitive object={connector.line} />
       <BillboardLabel
-        text="CONTACT"
+        text={label}
         fontSize={140}
         width={7}
         position={CONTACT_LABEL_POS}
@@ -808,12 +809,13 @@ function BackgroundPlanets() {
 
 /* ------------------------------------------------------------------ */
 
-export default function Planets() {
+export default function Planets({ locale = "en" }: { locale?: Locale }) {
+  const { ui } = getContent(locale);
   return (
     <group>
-      <AboutPlanet />
-      <ProjectsPlanet />
-      <ContactSun />
+      <AboutPlanet label={ui.scene.about} />
+      <ProjectsPlanet label={ui.scene.projects} />
+      <ContactSun label={ui.scene.contact} />
       <BackgroundPlanets />
     </group>
   );

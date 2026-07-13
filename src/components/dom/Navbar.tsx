@@ -3,20 +3,23 @@
 import { motion } from "motion/react";
 import { useRef } from "react";
 import type { SectionId } from "@/lib/journey";
-import { PROFILE } from "@/lib/data";
+import { LOCALES, LOCALE_PATH } from "@/lib/i18n";
+import { useI18n, useLocale } from "@/lib/locale";
 import { scrollToSection, useCurrentSection, useScrollRaf } from "@/lib/scroll";
 
-const LINKS: { id: SectionId; num: string; label: string }[] = [
-  { id: "about", num: "01", label: "About" },
-  { id: "experience", num: "02", label: "Work" },
-  { id: "projects", num: "03", label: "Projects" },
-  { id: "contact", num: "04", label: "Contact" },
-];
-
 export default function Navbar() {
+  const { profile, ui } = useI18n();
+  const locale = useLocale();
   const barRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const scrolledRef = useRef(false);
+
+  const LINKS: { id: SectionId; num: string; label: string }[] = [
+    { id: "about", num: "01", label: ui.nav.about },
+    { id: "experience", num: "02", label: ui.nav.work },
+    { id: "projects", num: "03", label: ui.nav.projects },
+    { id: "contact", num: "04", label: ui.nav.contact },
+  ];
 
   // hero/launch/skills aren't nav links — no link is active during those.
   const active: SectionId = useCurrentSection();
@@ -49,7 +52,7 @@ export default function Navbar() {
           data-cursor
           onClick={() => scrollToSection("hero")}
           className="pointer-events-auto"
-          aria-label="Back to top"
+          aria-label={ui.nav.backToTop}
         >
           <span className="font-display text-2xl font-bold leading-none text-star">
             jp<span className="text-cyan">.</span>
@@ -84,16 +87,35 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Résumé */}
-        <a
-          href={PROFILE.resume}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-cursor
-          className="pointer-events-auto rounded-full border border-cyan/60 px-6 py-2 font-mono text-xs uppercase tracking-hud text-cyan-bright transition-all duration-300 hover:bg-cyan/15 hover:shadow-[0_0_24px_rgba(76,201,240,0.4)]"
-        >
-          Résumé ↗
-        </a>
+        {/* Language switcher + Résumé */}
+        <div className="pointer-events-auto flex items-center gap-4">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
+            {LOCALES.map((l) => (
+              <a
+                key={l}
+                href={LOCALE_PATH[l]}
+                data-cursor
+                aria-current={l === locale ? "page" : undefined}
+                className={`transition-colors duration-300 ${
+                  l === locale
+                    ? "text-cyan"
+                    : "text-star/50 hover:text-star"
+                }`}
+              >
+                {l.toUpperCase()}
+              </a>
+            ))}
+          </div>
+          <a
+            href={profile.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor
+            className="rounded-full border border-cyan/60 px-6 py-2 font-mono text-xs uppercase tracking-hud text-cyan-bright transition-all duration-300 hover:bg-cyan/15 hover:shadow-[0_0_24px_rgba(76,201,240,0.4)]"
+          >
+            {ui.nav.resume} ↗
+          </a>
+        </div>
 
         {/* Bottom hairline — appears once scrolled */}
         <div
