@@ -9,7 +9,7 @@ import {
   Vignette,
 } from "@react-three/postprocessing";
 import type { BloomEffect, ChromaticAberrationEffect } from "postprocessing";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import type { Locale } from "@/lib/i18n";
 import { scrollState } from "@/lib/scroll";
@@ -152,34 +152,48 @@ function ImpactPostSurge({
 export default function Experience({ locale = "en" }: { locale?: Locale }) {
   const bloomRef = useRef<BloomEffect | null>(null);
   const chromaRef = useRef<ChromaticAberrationEffect | null>(null);
+  // Phones can't sustain full DPR + MSAA + postprocessing — the GPU drops the
+  // context and the scene flashes. Detect coarse pointers and trim the load.
+  const [isMobile] = useState(() => window.matchMedia("(pointer: coarse)").matches);
 
   return (
     <div className="fixed inset-0 z-0" aria-hidden>
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={isMobile ? [1, 1.25] : [1, 1.75]}
         gl={{
           // The EffectComposer renders via its own targets — canvas MSAA
           // would only burn memory without touching the composed output
           antialias: false,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.1,
-          powerPreference: "high-performance",
+          // "high-performance" can be *refused* by mobile browsers → no context
+          powerPreference: isMobile ? "default" : "high-performance",
         }}
         camera={{ position: [0, 0.4, 10], fov: 45, near: 0.1, far: 400 }}
         onCreated={(state) => {
           state.scene.fog = new THREE.FogExp2("#0a0618", 0.0035);
           // Handle for console debugging / tests
           (window as unknown as { __r3f: typeof state }).__r3f = state;
-          // Graceful recovery if the GPU drops the context (tab pressure,
-          // driver reset): one clean reload restores the scene.
+          // If the GPU drops the context (tab pressure, driver reset), try ONE
+          // clean reload. If it drops again before the scene renders steadily
+          // (chronic on low-end mobile), stop reloading — an endless reload
+          // *is* the flashing — and show the static fallback instead.
           state.gl.domElement.addEventListener(
             "webglcontextlost",
             (e) => {
               e.preventDefault();
-              window.location.reload();
+              if (sessionStorage.getItem("glLost")) {
+                window.dispatchEvent(new Event("gl-fatal"));
+              } else {
+                sessionStorage.setItem("glLost", "1");
+                window.location.reload();
+              }
             },
             { once: true }
           );
+          // Rendered cleanly for a few seconds → clear the recovery flag so a
+          // much-later one-off loss still gets its single reload.
+          window.setTimeout(() => sessionStorage.removeItem("glLost"), 8000);
         }}
       >
         <Suspense fallback={null}>
@@ -202,19 +216,24 @@ export default function Experience({ locale = "en" }: { locale?: Locale }) {
           <ProjectOrbit locale={locale} />
           <SunImpact />
 
-          <EffectComposer multisampling={4}>
-            <Bloom
-              ref={bloomRef}
-              intensity={0.95}
-              luminanceThreshold={0.22}
-              luminanceSmoothing={0.9}
-              mipmapBlur
-            />
-            <ChromaticAberration ref={chromaRef} offset={[0.0004, 0.0004]} />
-            <Vignette eskil={false} offset={0.18} darkness={0.82} />
-          </EffectComposer>
+          {/* Postprocessing (MSAA float targets + mipmap bloom) is the main
+              GPU-memory hog that triggers context loss on phones — skip it on
+              mobile and render the scene directly. */}
+          {!isMobile && (
+            <EffectComposer multisampling={4}>
+              <Bloom
+                ref={bloomRef}
+                intensity={0.95}
+                luminanceThreshold={0.22}
+                luminanceSmoothing={0.9}
+                mipmapBlur
+              />
+              <ChromaticAberration ref={chromaRef} offset={[0.0004, 0.0004]} />
+              <Vignette eskil={false} offset={0.18} darkness={0.82} />
+            </EffectComposer>
+          )}
 
-          <ImpactPostSurge bloom={bloomRef} chroma={chromaRef} />
+          {!isMobile && <ImpactPostSurge bloom={bloomRef} chroma={chromaRef} />}
           <SceneReady />
         </Suspense>
 

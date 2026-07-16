@@ -83,6 +83,11 @@ const UI_EN = {
   },
   loader: "Initializing Launch Sequence",
   mobile: { hint: "Move · drag to look", forward: "Move forward", back: "Move back" },
+  /** Shown when the GPU can't sustain the WebGL scene (low-end mobile). */
+  fallback: {
+    title: "This device can't run the 3D flight smoothly.",
+    retry: "Retry",
+  },
   /** Giant billboard labels + decals baked into the 3D scene. */
   scene: {
     about: "ABOUT ME",
@@ -160,6 +165,10 @@ const UI_FR: UIStrings = {
   },
   loader: "Initialisation de la séquence de lancement",
   mobile: { hint: "Avancer · glisser pour regarder", forward: "Avancer", back: "Reculer" },
+  fallback: {
+    title: "Cet appareil ne peut pas afficher le vol 3D correctement.",
+    retry: "Réessayer",
+  },
   scene: {
     about: "À PROPOS",
     projects: "PROJETS",
@@ -234,6 +243,10 @@ const UI_HE: UIStrings = {
   },
   loader: "מאתחל רצף שיגור",
   mobile: { hint: "תנועה · גררו להסתכל", forward: "קדימה", back: "אחורה" },
+  fallback: {
+    title: "המכשיר הזה לא יכול להריץ את הטיסה התלת-ממדית בצורה חלקה.",
+    retry: "נסו שוב",
+  },
   scene: {
     about: "עליי",
     projects: "פרויקטים",
