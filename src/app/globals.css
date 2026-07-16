@@ -135,12 +135,14 @@ body {
   }
 }
 
-/* Phones/small touch screens: vertical finger scroll drives the flight (the
+/* Touch (coarse-pointer) devices: vertical finger scroll drives the flight (the
    rAF loop reads window.scrollY) and scrolls the text panels. pan-y — not none —
    keeps that working while still reserving horizontal drags for free-look and,
    with overscroll-behavior:none, containing the URL bar / rubber-band that used
-   to make the scene flicker. On-screen controls stay as a secondary input. */
-@media (max-width: 1023px) and (pointer: coarse) {
+   to make the scene flicker. On-screen controls stay as a secondary input.
+   Condition matches Experience.tsx's isMobile (pointer:coarse) so the lightened
+   render and the scroll handling always apply to the same devices. */
+@media (pointer: coarse) {
   html,
   body {
     touch-action: pan-y;

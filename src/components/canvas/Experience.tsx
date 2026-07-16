@@ -174,10 +174,12 @@ export default function Experience({ locale = "en" }: { locale?: Locale }) {
           state.scene.fog = new THREE.FogExp2("#0a0618", 0.0035);
           // Handle for console debugging / tests
           (window as unknown as { __r3f: typeof state }).__r3f = state;
-          // If the GPU drops the context (tab pressure, driver reset), try ONE
-          // clean reload. If it drops again before the scene renders steadily
-          // (chronic on low-end mobile), stop reloading — an endless reload
-          // *is* the flashing — and show the static fallback instead.
+          // If the GPU drops the context (tab pressure, driver reset), spend ONE
+          // clean reload per session. If it drops again (chronic on low-end
+          // mobile), stop reloading — an endless reload *is* the flashing — and
+          // show the static fallback (its Retry button re-grants the reload).
+          // The flag persists for the whole session on purpose: a wall-clock
+          // reset would let losses spaced beyond it reopen the reload loop.
           state.gl.domElement.addEventListener(
             "webglcontextlost",
             (e) => {
@@ -191,9 +193,6 @@ export default function Experience({ locale = "en" }: { locale?: Locale }) {
             },
             { once: true }
           );
-          // Rendered cleanly for a few seconds → clear the recovery flag so a
-          // much-later one-off loss still gets its single reload.
-          window.setTimeout(() => sessionStorage.removeItem("glLost"), 8000);
         }}
       >
         <Suspense fallback={null}>
