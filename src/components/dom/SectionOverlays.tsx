@@ -64,6 +64,8 @@ function Kicker({ children }: { children: ReactNode }) {
 
 export default function SectionOverlays() {
   const { profile, experience, projects, ui } = useI18n();
+  const panelsHidden = useUIStore((s) => s.panelsHidden);
+  const setPanelsHidden = useUIStore((s) => s.setPanelsHidden);
   const aboutRef = useRef<HTMLDivElement>(null);
   const experienceRef = useRef<HTMLDivElement>(null);
   const skillsRef = useRef<HTMLDivElement>(null);
@@ -76,34 +78,39 @@ export default function SectionOverlays() {
   const lastContact = useRef(-1);
 
   useScrollRaf((p) => {
+    // Read non-reactively so the rAF loop always sees the latest flag without
+    // re-subscribing. When hidden, force alpha 0 → applyPanel writes opacity 0 +
+    // visibility:hidden, so panels vanish AND stop catching touches (the canvas
+    // behind gets them → free-look on the planet). Unhiding restores the envelope.
+    const hidden = useUIStore.getState().panelsHidden;
     applyPanel(
       aboutRef.current,
       lastAbout,
-      envelope(p, 0.205, 0.235, 0.315, 0.34),
+      hidden ? 0 : envelope(p, 0.205, 0.235, 0.315, 0.34),
       (a) => `translateX(${(-40 * (1 - a)).toFixed(2)}px)`
     );
     applyPanel(
       experienceRef.current,
       lastExperience,
-      envelope(p, 0.355, 0.39, 0.475, 0.5),
+      hidden ? 0 : envelope(p, 0.355, 0.39, 0.475, 0.5),
       (a) => `translateX(${(40 * (1 - a)).toFixed(2)}px)`
     );
     applyPanel(
       skillsRef.current,
       lastSkills,
-      envelope(p, 0.51, 0.54, 0.595, 0.62),
+      hidden ? 0 : envelope(p, 0.51, 0.54, 0.595, 0.62),
       (a) => `translateY(${(-18 * (1 - a)).toFixed(2)}px)`
     );
     applyPanel(
       projectsRef.current,
       lastProjects,
-      envelope(p, 0.635, 0.665, 0.775, 0.8),
+      hidden ? 0 : envelope(p, 0.635, 0.665, 0.775, 0.8),
       (a) => `translateX(${(-28 * (1 - a)).toFixed(2)}px)`
     );
     applyPanel(
       contactRef.current,
       lastContact,
-      smoothstep(0.82, 0.875, p),
+      hidden ? 0 : smoothstep(0.82, 0.875, p),
       (a) => `translateX(${(40 * (1 - a)).toFixed(2)}px)`
     );
   });
@@ -124,6 +131,7 @@ export default function SectionOverlays() {
       <div className="absolute inset-y-0 left-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={aboutRef}
+          onWheel={(e) => e.stopPropagation()}
           style={{
             ...HIDDEN,
             background:
@@ -132,7 +140,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll pointer-events-auto ml-4 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[470px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:ml-16"
+          className="hud-corners panel-scroll pointer-events-auto ml-4 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[470px] max-w-[calc(100vw-5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-hud/25 p-5 sm:p-8 lg:ml-16"
         >
           <Kicker>{ui.about.kicker}</Kicker>
           <h2 className="mt-3 font-display text-[28px] font-bold leading-[1.08] text-star sm:text-[40px] sm:leading-[1.05]">
@@ -166,6 +174,7 @@ export default function SectionOverlays() {
       <div className="absolute inset-y-0 right-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={experienceRef}
+          onWheel={(e) => e.stopPropagation()}
           style={{
             ...HIDDEN,
             background:
@@ -174,7 +183,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[560px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
+          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[560px] max-w-[calc(100vw-5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
           <Kicker>{ui.experience.kicker}</Kicker>
 
@@ -208,15 +217,10 @@ export default function SectionOverlays() {
 
           <div className="hud-line mt-4" />
 
-          <ul
-            key={activeJob}
-            onWheel={(e) => e.stopPropagation()}
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(76,201,240,0.35) transparent",
-            }}
-            className="mt-4 space-y-3 pr-2 sm:max-h-[300px] sm:overflow-y-auto"
-          >
+          {/* One scroll region per panel: the list flows inside the outer
+              panel's scroll (which is overscroll-contained) instead of a nested
+              scroller that was desktop-only (sm:) and clipped on mobile. */}
+          <ul key={activeJob} className="mt-4 space-y-3">
             {job.points.map((point) => (
               <li
                 key={point}
@@ -299,6 +303,7 @@ export default function SectionOverlays() {
       <div className="absolute inset-y-0 right-0 flex items-start pt-24 lg:items-center lg:pt-0">
         <div
           ref={contactRef}
+          onWheel={(e) => e.stopPropagation()}
           style={{
             ...HIDDEN,
             background:
@@ -307,7 +312,7 @@ export default function SectionOverlays() {
               "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
             backdropFilter: "blur(18px)",
           }}
-          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[460px] max-w-[calc(100vw-5rem)] overflow-y-auto rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
+          className="hud-corners panel-scroll pointer-events-auto mr-14 max-h-[calc(100svh-16rem)] lg:max-h-[80vh] w-[460px] max-w-[calc(100vw-5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-hud/25 p-5 sm:p-8 lg:mr-24"
         >
           <Kicker>{ui.contact.kicker}</Kicker>
           <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.1] text-star sm:text-[34px] sm:leading-[1.08]">
@@ -371,6 +376,28 @@ export default function SectionOverlays() {
           </p>
         </div>
       </div>
+
+      {/* Mobile: fade the text panels out to admire the planet behind them.
+          Lives outside the panels (applyPanel never touches it) so it stays
+          tappable while everything else is hidden. */}
+      <button
+        type="button"
+        aria-label={panelsHidden ? ui.panels.show : ui.panels.hide}
+        onClick={() => setPanelsHidden(!panelsHidden)}
+        className="pointer-events-auto absolute right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-20 flex h-11 w-11 items-center justify-center rounded-full border border-hud/25 bg-space/70 text-star/80 backdrop-blur-md transition-colors hover:text-cyan lg:hidden"
+      >
+        {panelsHidden ? (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8" />
+            <path d="M9.4 5.2A9.3 9.3 0 0112 5c5 0 9 4.5 9 7-.3.9-1 1.9-2 2.9M6.1 6.1C3.9 7.4 2.3 9.6 2 12c0 2.5 4 7 10 7a9.7 9.7 0 004-.8" />
+          </svg>
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        )}
+      </button>
     </div>
   );
 }

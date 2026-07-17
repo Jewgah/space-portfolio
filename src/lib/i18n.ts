@@ -88,6 +88,7 @@ const UI_EN = {
     title: "This device can't run the 3D flight smoothly.",
     retry: "Retry",
   },
+  panels: { hide: "Hide panels", show: "Show panels" },
   /** Giant billboard labels + decals baked into the 3D scene. */
   scene: {
     about: "ABOUT ME",
@@ -169,6 +170,7 @@ const UI_FR: UIStrings = {
     title: "Cet appareil ne peut pas afficher le vol 3D correctement.",
     retry: "Réessayer",
   },
+  panels: { hide: "Masquer les panneaux", show: "Afficher les panneaux" },
   scene: {
     about: "À PROPOS",
     projects: "PROJETS",
@@ -247,6 +249,7 @@ const UI_HE: UIStrings = {
     title: "המכשיר הזה לא יכול להריץ את הטיסה התלת-ממדית בצורה חלקה.",
     retry: "נסו שוב",
   },
+  panels: { hide: "הסתר פאנלים", show: "הצג פאנלים" },
   scene: {
     about: "עליי",
     projects: "פרויקטים",

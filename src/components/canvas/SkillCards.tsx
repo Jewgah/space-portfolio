@@ -1,7 +1,7 @@
 "use client";
 
 import { Float } from "@react-three/drei";
-import { useFrame, type ThreeEvent } from "@react-three/fiber";
+import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { type Skill } from "@/lib/data";
@@ -32,6 +32,13 @@ const LAYOUT: Slot[] = [
   { x: 3.6, y: -4.8, z: -141, side: -1 },
   { x: 17.4, y: -0.6, z: -149, side: 1 },
 ];
+
+// Cluster center x (= journey.ts SKILLS_CENTER.x). The layout spans x -1.6..17.4,
+// authored to sweep past the edge of a landscape frame. On a narrow portrait
+// screen three's horizontal FOV collapses and the side cards clip off-screen, so
+// we pull them toward this center. ponytail: PORTRAIT_KX tuned on-device.
+const CLUSTER_X = 9;
+const PORTRAIT_KX = 0.5;
 
 /* Scratch — zero per-frame allocations */
 const UP = new THREE.Vector3(0, 1, 0);
@@ -216,6 +223,11 @@ export default function SkillCards({ locale = "en" }: { locale?: Locale }) {
     };
   }, [shared]);
 
+  // Portrait: compress the wide card spread toward the cluster center so the
+  // side cards stay on-screen (narrow viewport = collapsed horizontal FOV).
+  const { width, height } = useThree((s) => s.size);
+  const kx = width < height ? PORTRAIT_KX : 1;
+
   return (
     <group>
       {skills.map((skill, i) => {
@@ -224,7 +236,7 @@ export default function SkillCards({ locale = "en" }: { locale?: Locale }) {
           <Card
             key={skill.name}
             skill={skill}
-            position={[slot.x, slot.y, slot.z]}
+            position={[CLUSTER_X + (slot.x - CLUSTER_X) * kx, slot.y, slot.z]}
             side={slot.side}
             plane={shared.plane}
             glowTex={shared.glowTex}

@@ -12,6 +12,9 @@ type UIState = {
   /** Id of the 3D project card currently hovered (drives cursor + hint). */
   hoveredProject: string | null;
   setHoveredProject: (id: string | null) => void;
+  /** Mobile: user hid the text panels to see the 3D scene/planet behind them. */
+  panelsHidden: boolean;
+  setPanelsHidden: (v: boolean) => void;
 };
 
 export const useUIStore = create<UIState>((set) => ({
@@ -21,6 +24,8 @@ export const useUIStore = create<UIState>((set) => ({
   setSelectedProject: (id) => set({ selectedProject: id }),
   hoveredProject: null,
   setHoveredProject: (id) => set({ hoveredProject: id }),
+  panelsHidden: false,
+  setPanelsHidden: (v) => set({ panelsHidden: v }),
 }));
 
 // Handle for console debugging / tests
