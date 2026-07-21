@@ -84,10 +84,8 @@ export default function ProjectModal() {
                 {ui.modal.brief}
               </span>
               <div className="absolute bottom-4 left-8 right-16">
-                <h3 className="font-display text-4xl font-bold text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
-                  {project.title}
-                </h3>
-                <div className="mt-2 flex flex-wrap items-center gap-3">
+                {/* Title overlay removed — the screenshot speaks for itself. */}
+                <div className="flex flex-wrap items-center gap-3">
                   {project.featured && (
                     <span className="rounded-full border border-cyan/40 px-3 py-1 font-mono text-[10px] uppercase text-cyan">
                       {ui.modal.featured}
